@@ -2,6 +2,7 @@
 namespace Grav\Plugin;
 
 use Grav\Common\Plugin;
+use Grav\Common\Uri;
 use RocketTheme\Toolbox\Event\Event;
 
 /**
@@ -37,9 +38,10 @@ class GetReferrerPlugin extends Plugin
             return;
         }
 
+
         // Enable the main event we are interested in
         $this->enable([
-            'onPageContentRaw' => ['onPageContentRaw', 0]
+            'onPageInitialized' => ['onPageInitialized', 0]
         ]);
     }
 
@@ -49,15 +51,19 @@ class GetReferrerPlugin extends Plugin
      *
      * @param Event $e
      */
-    public function onPageContentRaw(Event $e)
+    public function onPageInitialized(Event $e)
     {
         // Get a variable from the plugin configuration
-        $text = $this->grav['config']->get('plugins.get-referrer.text_var');
+        $uri = New Uri;
+        $referrer = $uri->referrer();
+        
+        $_SESSION['referrer'][] = $referrer;
+        //$text = $uri->path;        
 
         // Get the current raw content
-        $content = $e['page']->getRawContent();
+        //$content = $e['page']->getRawContent();
 
         // Prepend the output with the custom text and set back on the page
-        $e['page']->setRawContent($text . "\n\n" . $content);
+        //$e['page']->setRawContent($text . "\n\n" . $content);
     }
 }
