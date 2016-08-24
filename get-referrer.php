@@ -24,7 +24,7 @@ class GetReferrerPlugin extends Plugin
     public static function getSubscribedEvents()
     {
         return [
-            'onPluginsInitialized' => ['onPluginsInitialized', 0]
+            'onPluginsInitialized' => ['onPluginsInitialized', 0],
         ];
     }
 
@@ -55,15 +55,33 @@ class GetReferrerPlugin extends Plugin
     {
         // Get a variable from the plugin configuration
         $uri = New Uri;
-        $referrer = $uri->referrer();
+        $referrer = (strpos($uri->referrer(),'bechtel.com') !== false? $uri->referrer(): false);
+        if($referrer) {
+            $_SESSION['referrer'] = $referrer;    
+        }
+
+        /**
+         * expecting something like www.example.com/?target='url to referring page'
+         */
+        $target = (isset($_GET['target'])? $_GET['target'] : false);
+        if($target) {
+            $_SESSION['target'] = $target;
+        }
         
-        $_SESSION['referrer'][] = $referrer;
-        //$text = $uri->path;        
+       if($referrer || $target) {
+            $this->enable([
+                'onTwigSiteVariables' => ['onTwigSiteVariables', 0]
+            ]);
+       }
+    }
 
-        // Get the current raw content
-        //$content = $e['page']->getRawContent();
+    public function onTwigSiteVariables(Event $e)
+    {
 
-        // Prepend the output with the custom text and set back on the page
-        //$e['page']->setRawContent($text . "\n\n" . $content);
+        $this->grav['twig']->twig_vars['nsTarget'] = (isset($_SESSION['target'])? $_SESSION['target']: '' );
+
+
+        $this->grav['twig']->twig_vars['nsReferrer'] = (isset($_SESSION['referrer'])? $_SESSION['referrer']: '' );
+
     }
 }
