@@ -53,7 +53,7 @@ class GetReferrerPlugin extends Plugin
      */
     public function onPageInitialized(Event $e)
     {
-        // Get a variable from the plugin configuration
+        // Get the referrer for the site
         $uri = New Uri;
         $referrer = (strpos($uri->referrer(),'bechtel.com') !== false? $uri->referrer(): false);
         if($referrer) {
@@ -68,11 +68,9 @@ class GetReferrerPlugin extends Plugin
             $_SESSION['target'] = $target;
         }
         
-       if($referrer || $target) {
-            $this->enable([
+        $this->enable([
                 'onTwigSiteVariables' => ['onTwigSiteVariables', 0]
             ]);
-       }
     }
 
     public function onTwigSiteVariables(Event $e)
