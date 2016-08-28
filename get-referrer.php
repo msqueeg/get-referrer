@@ -54,9 +54,8 @@ class GetReferrerPlugin extends Plugin
     public function onPageInitialized(Event $e)
     {
         // Get the referrer for the site
-        $uri = New Uri;
-        $referrer = (strpos($uri->referrer(),'bechtel.com') !== false? $uri->referrer(): false);
-        if($referrer) {
+        $referrer = $_SERVER['HTTP_REFERER'];
+        if(strpos($referrer, 'bechtel.com') !== FALSE) {
             $_SESSION['referrer'] = $referrer;    
         }
 
