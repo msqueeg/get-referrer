@@ -54,7 +54,7 @@ class GetReferrerPlugin extends Plugin
     public function onPageInitialized(Event $e)
     {
         // Get the referrer for the site
-        $referrer = $_SERVER['HTTP_REFERER'];
+        $referrer = (isset($_SERVER['HTTP_REFERER'])? $_SERVER['HTTP_REFERER'] : FALSE);
         if(strpos($referrer, 'bechtel.com') !== FALSE) {
             $_SESSION['referrer'] = $referrer;    
         }
@@ -65,6 +65,11 @@ class GetReferrerPlugin extends Plugin
         $target = (isset($_GET['target'])? $_GET['target'] : false);
         if($target) {
             $_SESSION['target'] = $target;
+        }
+
+        $targetTitle = (isset($_GET['title'])? $_GET['title'] : false);
+        if($targetTitle) {
+            $_SESSION['targetTitle'] = $targetTitle;
         }
         
         $this->enable([
@@ -79,6 +84,8 @@ class GetReferrerPlugin extends Plugin
 
 
         $this->grav['twig']->twig_vars['nsReferrer'] = (isset($_SESSION['referrer'])? $_SESSION['referrer']: '' );
+
+        $this->grav['twig']->twig_vars['nsTitle'] = (isset($_SESSION['targetTitle'])? $_SESSION['targetTitle']: '');
 
     }
 }
